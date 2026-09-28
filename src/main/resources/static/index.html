@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Urban Subway Kinetic Floor Energy Harvesting System</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Clean CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Branding -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                        <i class="fa-solid fa-train-subway"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-base tracking-tight text-slate-900">MetroKinetic</span>
+                            <span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded">Spring Boot + MySQL</span>
+                        </div>
+                        <p class="text-xs text-slate-500 hidden sm:block">Smart Urban Subway Kinetic Floor Energy Harvesting System &bull; Currency: <strong>INR (₹)</strong></p>
+                    </div>
+                </div>
+
+                <!-- Right Header Actions -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="triggerSimulateBurst()" class="btn-secondary text-xs py-1.5 px-3">
+                        <i class="fa-solid fa-person-walking text-blue-600 mr-1.5"></i>
+                        <span>Simulate Footsteps</span>
+                    </button>
+
+                    <!-- User Account / Logout Widget -->
+                    <div id="auth-status-widget" class="flex items-center space-x-2">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 flex flex-col">
+
+        <!-- ============================================================== -->
+        <!-- VIEW 1: AUTHENTICATION (LOGIN & SIGN UP)                       -->
+        <!-- ============================================================== -->
+        <section id="view-auth" class="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full clean-card p-8 bg-white border border-slate-200 shadow-sm">
+                <!-- Header -->
+                <div class="text-center mb-6">
+                    <div class="inline-flex w-12 h-12 rounded-full bg-blue-50 text-blue-600 items-center justify-center text-xl mb-3">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-900">Subway Kinetic Energy System</h2>
+                    <p class="text-xs text-slate-500 mt-1">College Project Demo &bull; Sign in to your account</p>
+                </div>
+
+                <!-- Auth Mode Tabs (3 tabs: User Login, User Sign Up, Admin Sign In) -->
+                <div class="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-md mb-6 text-xs font-medium">
+                    <button onclick="switchAuthMode('user-login')" id="btn-mode-user-login" class="py-1.5 rounded bg-white text-blue-600 font-semibold shadow-sm">User Login</button>
+                    <button onclick="switchAuthMode('user-signup')" id="btn-mode-user-signup" class="py-1.5 rounded text-slate-600 hover:text-slate-900">User Sign Up</button>
+                    <button onclick="switchAuthMode('admin-login')" id="btn-mode-admin-login" class="py-1.5 rounded text-slate-600 hover:text-slate-900">Admin Sign In</button>
+                </div>
+
+                <!-- 1. User Login Form -->
+                <form id="form-user-login" onsubmit="handleUserLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="user-login-email" required class="form-input" placeholder="user@metro.in">
+                    </div>
+                    <div>
+                        <label class="form-label">Password</label>
+                        <input type="password" id="user-login-pass" required class="form-input" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-2">Sign In as User</button>
+                    <div class="text-center pt-2">
+                        <button type="button" onclick="quickFillUser()" class="text-xs text-blue-600 hover:underline">Quick Fill Demo User (user@metro.in / user123)</button>
+                    </div>
+                </form>
+
+                <!-- 2. User Sign Up Form -->
+                <form id="form-user-signup" onsubmit="handleUserSignUp(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="user-reg-name" required class="form-input" placeholder="e.g. Rahul Sharma">
+                    </div>
+                    <div>
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="user-reg-email" required class="form-input" placeholder="rahul@metro.in">
+                    </div>
+                    <div>
+                        <label class="form-label">Password</label>
+                        <input type="password" id="user-reg-pass" required class="form-input" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-2">Create User Account</button>
+                </form>
+
+                <!-- 3. Admin Login Form (Admin Sign In only) -->
+                <form id="form-admin-login" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
+                    <div class="p-2.5 bg-blue-50 border border-blue-100 rounded text-xs text-blue-800">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Admin Portal: Pre-configured system administrator sign in only.
+                    </div>
+                    <div>
+                        <label class="form-label">Admin Email</label>
+                        <input type="email" id="admin-login-email" required class="form-input" placeholder="admin@metro.in">
+                    </div>
+                    <div>
+                        <label class="form-label">Admin Password</label>
+                        <input type="password" id="admin-login-pass" required class="form-input" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-2">Sign In as Admin</button>
+                    <div class="text-center pt-2">
+                        <button type="button" onclick="quickFillAdmin()" class="text-xs text-blue-600 hover:underline">Quick Fill Demo Admin (admin@metro.in / admin123)</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- VIEW 2: NORMAL USER / OPERATOR PORTAL                          -->
+        <!-- ============================================================== -->
+        <section id="view-user-portal" class="hidden flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-200">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Station Operator Dashboard</h1>
+                    <p class="text-sm text-slate-500">Welcome, <span id="user-portal-name" class="font-medium text-slate-800">Operator</span>. Real-time kinetic telemetry monitoring.</p>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                    <button onclick="triggerSimulateBurst()" class="btn-primary">
+                        <i class="fa-solid fa-person-walking mr-2"></i> Simulate Footstep Burst
+                    </button>
+                </div>
+            </div>
+
+            <!-- Operator KPI Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <div class="clean-card p-5">
+                    <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Footsteps Recorded</span>
+                    <div id="user-kpi-steps" class="text-2xl font-bold text-slate-900 mt-2">--</div>
+                    <p class="text-xs text-slate-400 mt-1">From all station concourses</p>
+                </div>
+                <div class="clean-card p-5">
+                    <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Harvested Energy</span>
+                    <div id="user-kpi-energy" class="text-2xl font-bold text-blue-600 mt-2">-- kWh</div>
+                    <p class="text-xs text-slate-400 mt-1">Converted to clean electricity</p>
+                </div>
+                <div class="clean-card p-5">
+                    <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Monitored Sectors</span>
+                    <div id="user-kpi-sectors" class="text-2xl font-bold text-slate-900 mt-2">--</div>
+                    <p class="text-xs text-slate-400 mt-1">High-footfall transit zones</p>
+                </div>
+            </div>
+
+            <!-- Recent Telemetry Table -->
+            <div class="clean-card overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <h3 class="font-semibold text-slate-900">Recent Live Telemetry Stream</h3>
+                    <span class="text-xs text-slate-500">Updated automatically</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="clean-table">
+                        <thead>
+                            <tr>
+                                <th>Record ID</th>
+                                <th>Station & Sector</th>
+                                <th>Date</th>
+                                <th>Footsteps</th>
+                                <th>Energy Harvested</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-telemetry-table-body">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- VIEW 3: ADMIN PANEL (SIDEBAR + MAIN CONTENT LAYOUT)            -->
+        <!-- ============================================================== -->
+        <section id="view-admin-panel" class="hidden flex-1 flex flex-col md:flex-row w-full min-h-[calc(100vh-65px)]">
+
+            <!-- Clean Sidebar Navigation -->
+            <aside class="w-full md:w-64 bg-white border-r border-slate-200 p-4 flex flex-col">
+                <div class="pb-3 mb-3 border-b border-slate-200">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Admin Management</span>
+                </div>
+
+                <nav id="admin-nav-bar" class="flex flex-col space-y-1 text-sm flex-1">
+                    <a onclick="switchAdminTab('dashboard')" id="nav-tab-dashboard" class="sidebar-link active">
+                        <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+                    </a>
+                    <a onclick="switchAdminTab('sectors')" id="nav-tab-sectors" class="sidebar-link">
+                        <i class="fa-solid fa-map-location-dot"></i><span>Station Sectors</span>
+                    </a>
+                    <a onclick="switchAdminTab('telemetry')" id="nav-tab-telemetry" class="sidebar-link">
+                        <i class="fa-solid fa-wave-square"></i><span>Kinetic Telemetry</span>
+                    </a>
+                    <a onclick="switchAdminTab('tiles')" id="nav-tab-tiles" class="sidebar-link">
+                        <i class="fa-solid fa-cubes-stacked"></i><span>Kinetic Tiles</span>
+                    </a>
+                    <a onclick="switchAdminTab('parties')" id="nav-tab-parties" class="sidebar-link">
+                        <i class="fa-solid fa-handshake"></i><span>Customers & Vendors</span>
+                    </a>
+                    <a onclick="switchAdminTab('sales')" id="nav-tab-sales" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Invoices</span>
+                    </a>
+                    <a onclick="switchAdminTab('bills')" id="nav-tab-bills" class="sidebar-link">
+                        <i class="fa-solid fa-receipt"></i><span>Vendor Bills</span>
+                    </a>
+                    <a onclick="switchAdminTab('payments')" id="nav-tab-payments" class="sidebar-link">
+                        <i class="fa-solid fa-money-bill-transfer"></i><span>Payments</span>
+                    </a>
+                    <a onclick="switchAdminTab('budgets')" id="nav-tab-budgets" class="sidebar-link">
+                        <i class="fa-solid fa-chart-pie"></i><span>Budgets</span>
+                    </a>
+                    <a onclick="switchAdminTab('users')" id="nav-tab-users" class="sidebar-link">
+                        <i class="fa-solid fa-users"></i><span>Users & Admins</span>
+                    </a>
+                    <a onclick="switchAdminTab('accounting')" id="nav-tab-accounting" class="sidebar-link">
+                        <i class="fa-solid fa-scale-balanced"></i><span>Accounting / Ledger</span>
+                    </a>
+                    <a onclick="switchAdminTab('reports')" id="nav-tab-reports" class="sidebar-link">
+                        <i class="fa-solid fa-file-lines"></i><span>Financial Reports</span>
+                    </a>
+                </nav>
+
+                <div class="pt-4 border-t border-slate-200 text-[11px] text-slate-400">
+                    <div>Database: <span class="font-mono text-slate-600 font-medium">kinetic_energy_db</span></div>
+                    <div>Host: <span class="font-mono text-slate-600 font-medium">localhost:3306</span></div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 bg-slate-50 p-6 md:p-8 overflow-y-auto">
+
+                <!-- 1. DASHBOARD TAB -->
+                <div id="admin-tab-dashboard" class="admin-tab-view space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-200">
+                        <div>
+                            <h1 class="text-xl font-bold text-slate-900">Executive Energy & Financial Dashboard</h1>
+                            <p class="text-xs text-slate-500">Overview of subway kinetic floor generation, power sales, and accounting.</p>
+                        </div>
+                        <div class="mt-3 sm:mt-0 flex space-x-2">
+                            <button onclick="loadDashboard()" class="btn-secondary text-xs">
+                                <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Top 5 Main KPI Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="clean-card p-4">
+                            <div class="text-xs font-medium text-slate-500 uppercase">Energy Generated</div>
+                            <div class="text-2xl font-bold text-slate-900 mt-2"><span id="dash-stat-gen-kwh">0</span> <span class="text-xs font-normal text-slate-500">kWh</span></div>
+                            <div class="text-[11px] text-slate-400 mt-1"><span id="dash-stat-steps">0</span> total steps</div>
+                        </div>
+                        <div class="clean-card p-4">
+                            <div class="text-xs font-medium text-slate-500 uppercase">Energy Sold</div>
+                            <div class="text-2xl font-bold text-blue-600 mt-2"><span id="dash-stat-sold-kwh">0</span> <span class="text-xs font-normal text-slate-500">kWh</span></div>
+                            <div class="text-[11px] text-slate-400 mt-1">To power grids</div>
+                        </div>
+                        <div class="clean-card p-4">
+                            <div class="text-xs font-medium text-slate-500 uppercase">Total Revenue</div>
+                            <div class="text-2xl font-bold text-slate-900 mt-2">₹<span id="dash-stat-revenue">0.00</span></div>
+                            <div class="text-[11px] text-slate-400 mt-1">Power sales (INR)</div>
+                        </div>
+                        <div class="clean-card p-4">
+                            <div class="text-xs font-medium text-slate-500 uppercase">Total Expenses</div>
+                            <div class="text-2xl font-bold text-slate-900 mt-2">₹<span id="dash-stat-expenses">0.00</span></div>
+                            <div class="text-[11px] text-slate-400 mt-1">Maintenance & Inverter</div>
+                        </div>
+                        <div class="clean-card p-4">
+                            <div class="text-xs font-medium text-slate-500 uppercase">Net Profit</div>
+                            <div class="text-2xl font-bold text-green-600 mt-2">₹<span id="dash-stat-profit">0.00</span></div>
+                            <div class="text-[11px] text-slate-400 mt-1">Revenue minus expenses</div>
+                        </div>
+                    </div>
+
+                    <!-- Double-entry Accounting Balances -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="clean-card p-4 bg-white border-l-4 border-blue-600">
+                            <span class="text-xs font-medium text-slate-500">Liquid Bank Balance (INR)</span>
+                            <div class="text-xl font-bold text-slate-900 mt-1">₹<span id="dash-stat-bank">0.00</span></div>
+                            <span class="text-[11px] text-slate-400">Dr Bank account</span>
+                        </div>
+                        <div class="clean-card p-4 bg-white border-l-4 border-amber-500">
+                            <span class="text-xs font-medium text-slate-500">Customer Receivables (INR)</span>
+                            <div class="text-xl font-bold text-slate-900 mt-1">₹<span id="dash-stat-receivable">0.00</span></div>
+                            <span class="text-[11px] text-slate-400">Uncollected power invoices</span>
+                        </div>
+                        <div class="clean-card p-4 bg-white border-l-4 border-red-500">
+                            <span class="text-xs font-medium text-slate-500">Vendor Payables (INR)</span>
+                            <div class="text-xl font-bold text-slate-900 mt-1">₹<span id="dash-stat-payable">0.00</span></div>
+                            <span class="text-[11px] text-slate-400">Outstanding maintenance bills</span>
+                        </div>
+                    </div>
+
+                    <!-- Clean Charts Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="clean-card p-5 lg:col-span-2">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold text-sm text-slate-800">Daily Kinetic Generation & Steps</h3>
+                                <span class="text-xs text-slate-400">Last 7 Days</span>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="chart-daily-energy"></canvas>
+                            </div>
+                        </div>
+                        <div class="clean-card p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold text-sm text-slate-800">Generation Share by Sector</h3>
+                                <span class="text-xs text-slate-400">Station Breakdown</span>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="chart-sector-share"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. STATION SECTORS TAB -->
+                <div id="admin-tab-sectors" class="admin-tab-view hidden space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Station Sectors</h2>
+                            <p class="text-xs text-slate-500">Turnstiles, transfer corridors, platforms, and concourses.</p>
+                        </div>
+                        <button onclick="openModal('modal-sector')" class="btn-primary text-xs">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Add Station Sector
+                        </button>
+                    </div>
+
+                    <div class="clean-card overflow-hidden">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Station Name</th>
+                                    <th>Sector Name</th>
+                                    <th>Location Details</th>
+                                    <th>Installed Tiles</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-sectors-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. TELEMETRY TAB -->
+                <div id="admin-tab-telemetry" class="admin-tab-view hidden space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Kinetic Energy Telemetry</h2>
+                            <p class="text-xs text-slate-500">Daily recorded footstep counts and generated energy (kWh).</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="triggerSimulateBurst()" class="btn-secondary text-xs">
+                                <i class="fa-solid fa-person-walking mr-1"></i> Simulate Burst
+                            </button>
+                            <button onclick="openModal('modal-telemetry')" class="btn-primary text-xs">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Record Telemetry
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="clean-card overflow-hidden">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Station & Sector</th>
+                                    <th>Date</th>
+                                    <th>Step Count</th>
+                                    <th>Energy Generated (kWh)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-telemetry-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. KINETIC TILES TAB -->
+                <div id="admin-tab-tiles" class="admin-tab-view hidden space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Kinetic Floor Tiles</h2>
+                            <p class="text-xs text-slate-500">Piezoelectric, electromagnetic, and hybrid floor tiles catalog.</p>
+                        </div>
+                        <button onclick="openModal('modal-tile')" class="btn-primary text-xs">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Add Kinetic Tile
+                        </button>
+                    </div>
+
+                    <div class="clean-card overflow-hidden">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tile Model</th>
+                                    <th>Transducer Type</th>
+                                    <th>Unit Price (INR)</th>
+                                    <th>Stock / Qty</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-tiles-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. PARTIES (CUSTOMERS & VENDORS) TAB -->
+                <div id="admin-tab-parties" class="admin-tab-view hidden space-y-6">
+                    <!-- Power Grid Customers -->
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-900">Power Grid Customers</h2>
+                                <p class="text-xs text-slate-500">Utilities purchasing harvested kinetic electrical power.</p>
+                            </div>
+                            <button onclick="openModal('modal-customer')" class="btn-primary text-xs">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Customer
+                            </button>
+                        </div>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Customer / Utility Name</th>
+                                        <th>Contact</th>
+                                        <th>Email</th>
+                                        <th>Grid Intertie Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-customers-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tile Vendors -->
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-900">Tile Vendors & Contractors</h2>
+                                <p class="text-xs text-slate-500">Tile suppliers, repair contractors, and transducer manufacturers.</p>
+                            </div>
+                            <button onclick="openModal('modal-vendor')" class="btn-primary text-xs">
+                                <i class="fa-solid fa-plus mr-1.5"></i> Add Vendor
+                            </button>
+                        </div>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Vendor Company</th>
+                                        <th>Contact</th>
+                                        <th>Email</th>
+                                        <th>Facility Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-vendors-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. SALES ORDERS & CUSTOMER INVOICES TAB -->
+                <div id="admin-tab-sales" class="admin-tab-view hidden space-y-6">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Energy Sales Orders & Customer Invoices</h2>
+                            <p class="text-xs text-slate-500">Sell harvested power (kWh) at negotiated ₹/kWh rates to grid discoms.</p>
+                        </div>
+                        <button onclick="openModal('modal-sale')" class="btn-primary text-xs">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Create Energy Sale Order
+                        </button>
+                    </div>
+
+                    <!-- Invoices Table -->
+                    <div>
+                        <h3 class="font-semibold text-sm text-slate-800 mb-2">Commercial Customer Invoices</h3>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Order Ref</th>
+                                        <th>Grid Customer</th>
+                                        <th>Invoice Date</th>
+                                        <th>Due Date</th>
+                                        <th>Amount (INR)</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-invoices-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Sales Orders Table -->
+                    <div>
+                        <h3 class="font-semibold text-sm text-slate-800 mb-2">Energy Sales Orders</h3>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Customer</th>
+                                        <th>Order Date</th>
+                                        <th>Energy Sold</th>
+                                        <th>Rate (₹/kWh)</th>
+                                        <th>Total (INR)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-sales-orders-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. VENDOR BILLS TAB -->
+                <div id="admin-tab-bills" class="admin-tab-view hidden space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Vendor Bills & Maintenance Expenses</h2>
+                            <p class="text-xs text-slate-500">Tile replacements, transducer overhauls, and inverter maintenance.</p>
+                        </div>
+                        <button onclick="openModal('modal-bill')" class="btn-primary text-xs">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Record Vendor Bill
+                        </button>
+                    </div>
+
+                    <div class="clean-card overflow-hidden">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Bill #</th>
+                                    <th>Vendor</th>
+                                    <th>Date</th>
+                                    <th>Expense Description</th>
+                                    <th>Qty</th>
+                                    <th>Amount (INR)</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-bills-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 8. PAYMENTS TAB -->
+                <div id="admin-tab-payments" class="admin-tab-view hidden space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Payments & Cash Settlements</h2>
+                            <p class="text-xs text-slate-500">Customer invoice receipts and vendor maintenance disbursements.</p>
+                        </div>
+                    </div>
+
+                    <div class="clean-card overflow-hidden">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Payment Ref</th>
+                                    <th>Type</th>
+                                    <th>Reference Document</th>
+                                    <th>Date</th>
+                                    <th>Amount (INR)</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-payments-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 9. BUDGETS TAB -->
+                <div id="admin-tab-budgets" class="admin-tab-view hidden space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Station Sector Budgets</h2>
+                            <p class="text-xs text-slate-500">Planned vs actual revenue and maintenance expenditure with variance.</p>
+                        </div>
+                        <button onclick="openModal('modal-budget')" class="btn-primary text-xs">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Set Sector Budget
+                        </button>
+                    </div>
+
+                    <div class="clean-card overflow-hidden">
+                        <table class="clean-table">
+                            <thead>
+                                <tr>
+                                    <th>Station & Sector</th>
+                                    <th>FY</th>
+                                    <th>Planned Rev (₹)</th>
+                                    <th>Actual Rev (₹)</th>
+                                    <th>Rev Variance (₹)</th>
+                                    <th>Planned Exp (₹)</th>
+                                    <th>Actual Exp (₹)</th>
+                                    <th>Exp Variance (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-budgets-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 10. USERS & ADMINS TAB -->
+                <div id="admin-tab-users" class="admin-tab-view hidden space-y-6">
+                    <!-- Normal Users -->
+                    <div>
+                        <div class="pb-3 border-b border-slate-200 mb-3">
+                            <h2 class="text-lg font-bold text-slate-900">Registered Users (Station Operators)</h2>
+                            <p class="text-xs text-slate-500">Stored in MySQL table: <code class="text-blue-700">users</code> (BCrypt hashed passwords)</p>
+                        </div>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>User Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Registered At</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-list-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Admin Users -->
+                    <div>
+                        <div class="pb-3 border-b border-slate-200 mb-3">
+                            <h2 class="text-lg font-bold text-slate-900">System Administrators</h2>
+                            <p class="text-xs text-slate-500">Stored in MySQL table: <code class="text-blue-700">admin_users</code> (BCrypt hashed passwords)</p>
+                        </div>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Admin Name</th>
+                                        <th>Email</th>
+                                        <th>Created At</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-admins-list-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11. ACCOUNTING / LEDGER TAB -->
+                <div id="admin-tab-accounting" class="admin-tab-view hidden space-y-6">
+                    <div class="pb-3 border-b border-slate-200">
+                        <h2 class="text-lg font-bold text-slate-900">Double-Entry Accounting Engine</h2>
+                        <p class="text-xs text-slate-500">Automated ledger posting: Energy Sales, Payments, Vendor Bills & Maintenance.</p>
+                    </div>
+
+                    <!-- Chart of Accounts -->
+                    <div>
+                        <h3 class="font-semibold text-sm text-slate-800 mb-2">Chart of Accounts (Real-time Balances)</h3>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>Account Code</th>
+                                        <th>Account Title</th>
+                                        <th>Type</th>
+                                        <th>Balance (INR ₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-accounts-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- General Ledger / Journal Entries -->
+                    <div>
+                        <h3 class="font-semibold text-sm text-slate-800 mb-2">General Ledger / Journal Entries</h3>
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>Journal #</th>
+                                        <th>Date</th>
+                                        <th>Transaction Type</th>
+                                        <th>Debit Account</th>
+                                        <th>Credit Account</th>
+                                        <th>Amount (INR)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-journal-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12. REPORTS TAB -->
+                <div id="admin-tab-reports" class="admin-tab-view hidden space-y-6">
+                    <div class="pb-3 border-b border-slate-200">
+                        <h2 class="text-lg font-bold text-slate-900">Financial & Telemetry Reports</h2>
+                        <p class="text-xs text-slate-500">Official business accounting reports formatted in Indian Rupees (₹).</p>
+                    </div>
+
+                    <!-- Subtab Buttons -->
+                    <div class="flex flex-wrap gap-2 pb-2 border-b border-slate-200">
+                        <button onclick="switchReportSubtab('pnl')" id="rep-btn-pnl" class="btn-primary text-xs py-1.5 px-3">Profit & Loss</button>
+                        <button onclick="switchReportSubtab('budget')" id="rep-btn-budget" class="btn-secondary text-xs py-1.5 px-3">Budget Report</button>
+                        <button onclick="switchReportSubtab('energy')" id="rep-btn-energy" class="btn-secondary text-xs py-1.5 px-3">Energy Report</button>
+                        <button onclick="switchReportSubtab('invoices')" id="rep-btn-invoices" class="btn-secondary text-xs py-1.5 px-3">Customer Invoices</button>
+                        <button onclick="switchReportSubtab('bills')" id="rep-btn-bills" class="btn-secondary text-xs py-1.5 px-3">Vendor Bills</button>
+                    </div>
+
+                    <!-- Subview 1: P&L -->
+                    <div id="rep-view-pnl" class="report-view space-y-4">
+                        <div class="clean-card p-6 max-w-2xl bg-white">
+                            <h3 class="font-bold text-base text-slate-900 pb-3 border-b border-slate-200">Statement of Profit & Loss (FY 2026)</h3>
+                            <div class="space-y-3 pt-3 text-sm">
+                                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                                    <span class="text-slate-600 font-medium">Harvested Power Sales Revenue</span>
+                                    <span id="rep-pnl-revenue" class="font-semibold text-slate-900">₹0.00</span>
+                                </div>
+                                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                                    <span class="text-slate-600">Maintenance & Tile Repair Expense</span>
+                                    <span id="rep-pnl-maint" class="text-slate-700">₹0.00</span>
+                                </div>
+                                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                                    <span class="text-slate-600">Inverter Maintenance & Calibration</span>
+                                    <span id="rep-pnl-inverter" class="text-slate-700">₹0.00</span>
+                                </div>
+                                <div class="flex justify-between py-1.5 border-b border-slate-200 font-medium">
+                                    <span class="text-slate-800">Total Operating Expenses</span>
+                                    <span id="rep-pnl-total-exp" class="text-slate-800">₹0.00</span>
+                                </div>
+                                <div class="flex justify-between py-2.5 text-base font-bold bg-slate-50 px-3 rounded">
+                                    <span class="text-blue-900">Net Operating Profit</span>
+                                    <span id="rep-pnl-net" class="text-green-600">₹0.00</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-slate-500 pt-1">
+                                    <span>Profit Margin</span>
+                                    <span id="rep-pnl-margin" class="font-medium text-slate-700">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subview 2: Budget Report -->
+                    <div id="rep-view-budget" class="report-view hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Planned Revenue</span>
+                                <div id="rep-bgt-plan-rev" class="text-lg font-bold text-slate-900 mt-1">₹0</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Actual Revenue</span>
+                                <div id="rep-bgt-act-rev" class="text-lg font-bold text-green-600 mt-1">₹0</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Planned Expenses</span>
+                                <div id="rep-bgt-plan-exp" class="text-lg font-bold text-slate-900 mt-1">₹0</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Actual Expenses</span>
+                                <div id="rep-bgt-act-exp" class="text-lg font-bold text-red-600 mt-1">₹0</div>
+                            </div>
+                        </div>
+
+                        <div class="clean-card overflow-hidden">
+                            <table class="clean-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sector</th>
+                                        <th>Station</th>
+                                        <th>FY</th>
+                                        <th>Planned Rev</th>
+                                        <th>Actual Rev</th>
+                                        <th>Planned Exp</th>
+                                        <th>Actual Exp</th>
+                                        <th>Rev Variance</th>
+                                        <th>Exp Variance</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rep-budget-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Subview 3: Energy Report -->
+                    <div id="rep-view-energy" class="report-view hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Total Steps Recorded</span>
+                                <div id="rep-eng-steps" class="text-xl font-bold text-slate-900 mt-1">0</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Energy Generated</span>
+                                <div id="rep-eng-gen" class="text-xl font-bold text-blue-600 mt-1">0.00 kWh</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Energy Sold</span>
+                                <div id="rep-eng-sold" class="text-xl font-bold text-slate-900 mt-1">0.00 kWh</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Reserve in Battery</span>
+                                <div id="rep-eng-reserve" class="text-xl font-bold text-green-600 mt-1">0.00 kWh</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subview 4: Customer Invoices Report -->
+                    <div id="rep-view-invoices" class="report-view hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Total Invoiced</span>
+                                <div id="rep-inv-total" class="text-xl font-bold text-slate-900 mt-1">₹0.00</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Paid Receivables</span>
+                                <div id="rep-inv-paid" class="text-xl font-bold text-green-600 mt-1">₹0.00</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Unpaid Receivables</span>
+                                <div id="rep-inv-unpaid" class="text-xl font-bold text-amber-600 mt-1">₹0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subview 5: Vendor Bills Report -->
+                    <div id="rep-view-bills" class="report-view hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Total Vendor Billed</span>
+                                <div id="rep-bill-total" class="text-xl font-bold text-slate-900 mt-1">₹0.00</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Paid Vendor Bills</span>
+                                <div id="rep-bill-paid" class="text-xl font-bold text-green-600 mt-1">₹0.00</div>
+                            </div>
+                            <div class="clean-card p-4">
+                                <span class="text-xs text-slate-500 font-medium">Outstanding Payables</span>
+                                <div id="rep-bill-unpaid" class="text-xl font-bold text-red-600 mt-1">₹0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500">
+        Smart Urban Subway Kinetic Floor Energy Harvesting System &bull; Java 21 &bull; Spring Boot &bull; Spring Data JPA &bull; MySQL &bull; INR (₹)
+    </footer>
+
+    <!-- ============================================================== -->
+    <!-- MODALS (CLEAN BUSINESS DIALOGS)                                -->
+    <!-- ============================================================== -->
+
+    <!-- 1. Modal: Record Telemetry -->
+    <div id="modal-telemetry" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Record Kinetic Telemetry</h3>
+            <form onsubmit="submitTelemetry(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Station Sector</label>
+                    <select id="telem-input-sector" required class="form-input"></select>
+                </div>
+                <div>
+                    <label class="form-label">Date</label>
+                    <input type="date" id="telem-input-date" required class="form-input">
+                </div>
+                <div>
+                    <label class="form-label">Footstep Count</label>
+                    <input type="number" id="telem-input-steps" required min="1" oninput="autoCalcTelemEnergy()" class="form-input" placeholder="e.g. 15000">
+                </div>
+                <div>
+                    <label class="form-label">Energy Generated (kWh)</label>
+                    <input type="number" step="0.001" id="telem-input-kwh" class="form-input" placeholder="Auto-calculated (0.00026 kWh/step)">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-telemetry')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Save Telemetry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Modal: Add Station Sector -->
+    <div id="modal-sector" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Add Station Sector</h3>
+            <form onsubmit="submitSector(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Subway Station Name</label>
+                    <input type="text" id="sec-input-station" required class="form-input" placeholder="e.g. Central Metro Station">
+                </div>
+                <div>
+                    <label class="form-label">Sector Name</label>
+                    <input type="text" id="sec-input-sector" required class="form-input" placeholder="e.g. North Concourse Turnstiles">
+                </div>
+                <div>
+                    <label class="form-label">Location Details</label>
+                    <input type="text" id="sec-input-loc" class="form-input" placeholder="e.g. Gate 2 Fare Gates">
+                </div>
+                <div>
+                    <label class="form-label">Installed Kinetic Tiles Count</label>
+                    <input type="number" id="sec-input-count" required min="1" value="20" class="form-input">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-sector')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Save Sector</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Modal: Add Kinetic Tile -->
+    <div id="modal-tile" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Catalog Kinetic Tile</h3>
+            <form onsubmit="submitTile(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Tile Model Name</label>
+                    <input type="text" id="tile-input-name" required class="form-input" placeholder="e.g. KT-CENTRAL-03">
+                </div>
+                <div>
+                    <label class="form-label">Transducer Mechanism</label>
+                    <select id="tile-input-type" class="form-input">
+                        <option value="Piezoelectric Dual-Stack">Piezoelectric Dual-Stack</option>
+                        <option value="Electromagnetic Micro-Dynamo">Electromagnetic Micro-Dynamo</option>
+                        <option value="Hybrid Piezo-Electromagnetic">Hybrid Piezo-Electromagnetic</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Unit Price (INR ₹)</label>
+                    <input type="number" step="0.01" id="tile-input-price" required class="form-input" placeholder="e.g. 45000">
+                </div>
+                <div>
+                    <label class="form-label">Quantity in Inventory</label>
+                    <input type="number" id="tile-input-qty" required min="0" value="10" class="form-input">
+                </div>
+                <div>
+                    <label class="form-label">Operational Status</label>
+                    <select id="tile-input-status" class="form-input">
+                        <option value="Active">Active</option>
+                        <option value="Maintenance">Maintenance</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-tile')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Save Tile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Modal: Add Power Grid Customer -->
+    <div id="modal-customer" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Add Power Grid Customer</h3>
+            <form onsubmit="submitCustomer(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Utility / Discom Name</label>
+                    <input type="text" id="cust-input-name" required class="form-input" placeholder="e.g. Northern Regional Power Grid">
+                </div>
+                <div>
+                    <label class="form-label">Contact Person</label>
+                    <input type="text" id="cust-input-contact" class="form-input" placeholder="e.g. S. K. Verma">
+                </div>
+                <div>
+                    <label class="form-label">Official Email</label>
+                    <input type="email" id="cust-input-email" class="form-input" placeholder="grid@nrpc.gov.in">
+                </div>
+                <div>
+                    <label class="form-label">Substation / Intertie Address</label>
+                    <input type="text" id="cust-input-addr" class="form-input" placeholder="e.g. Substation Intertie Feeder 4">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-customer')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Save Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. Modal: Add Tile Vendor -->
+    <div id="modal-vendor" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Add Tile Vendor</h3>
+            <form onsubmit="submitVendor(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Vendor Company Name</label>
+                    <input type="text" id="ven-input-name" required class="form-input" placeholder="e.g. PaveStep Technologies">
+                </div>
+                <div>
+                    <label class="form-label">Contact Person</label>
+                    <input type="text" id="ven-input-contact" class="form-input" placeholder="e.g. Rajesh Mehra">
+                </div>
+                <div>
+                    <label class="form-label">Contact Email</label>
+                    <input type="email" id="ven-input-email" class="form-input" placeholder="support@pavestep.in">
+                </div>
+                <div>
+                    <label class="form-label">Facility Address</label>
+                    <input type="text" id="ven-input-addr" class="form-input" placeholder="e.g. Okhla Industrial Area">
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-vendor')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Save Vendor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. Modal: Create Energy Sales Order -->
+    <div id="modal-sale" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Create Energy Sale Order</h3>
+            <form onsubmit="submitSaleOrder(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Power Grid Customer</label>
+                    <select id="sale-input-customer" required class="form-input"></select>
+                </div>
+                <div>
+                    <label class="form-label">Contract Date</label>
+                    <input type="date" id="sale-input-date" required class="form-input">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">Energy (kWh)</label>
+                        <input type="number" step="0.1" id="sale-input-kwh" required oninput="calcSaleTotal()" class="form-input" placeholder="e.g. 1000">
+                    </div>
+                    <div>
+                        <label class="form-label">Price / kWh (INR ₹)</label>
+                        <input type="number" step="0.1" id="sale-input-price" required value="8.0" oninput="calcSaleTotal()" class="form-input">
+                    </div>
+                </div>
+                <div class="p-3 bg-blue-50 border border-blue-100 rounded flex justify-between items-center text-sm">
+                    <span class="text-blue-900 font-medium">Invoice Total:</span>
+                    <span id="sale-calc-total" class="text-base font-bold text-blue-700">₹0.00</span>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-sale')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Create Order & Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 7. Modal: Record Vendor Bill -->
+    <div id="modal-bill" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Record Vendor Bill</h3>
+            <form onsubmit="submitVendorBill(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Tile Vendor / Contractor</label>
+                    <select id="bill-input-vendor" required class="form-input"></select>
+                </div>
+                <div>
+                    <label class="form-label">Bill Date</label>
+                    <input type="date" id="bill-input-date" required class="form-input">
+                </div>
+                <div>
+                    <label class="form-label">Expense Description</label>
+                    <input type="text" id="bill-input-desc" required class="form-input" placeholder="e.g. Tile transducer overhaul and maintenance">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">Quantity</label>
+                        <input type="number" id="bill-input-qty" required min="1" value="1" class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">Total Amount (INR ₹)</label>
+                        <input type="number" step="0.01" id="bill-input-amount" required class="form-input" placeholder="e.g. 12000">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-bill')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Post Vendor Bill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. Modal: Settle Payment -->
+    <div id="modal-payment" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Record Payment Settlement</h3>
+            <form onsubmit="submitPayment(event)" class="space-y-4">
+                <input type="hidden" id="pay-target-type">
+                <input type="hidden" id="pay-target-id">
+
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded text-sm">
+                    <div id="pay-display-label" class="font-semibold text-slate-900">Settling: --</div>
+                </div>
+                <div>
+                    <label class="form-label">Payment Date</label>
+                    <input type="date" id="pay-input-date" required class="form-input">
+                </div>
+                <div>
+                    <label class="form-label">Payment Method</label>
+                    <select id="pay-input-method" class="form-input">
+                        <option value="Bank Transfer">Bank Transfer (NEFT / RTGS)</option>
+                        <option value="UPI">UPI Digital Payment</option>
+                        <option value="Direct Cheque">Direct Cheque</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-payment')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Complete Settlement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 9. Modal: Sector Budget -->
+    <div id="modal-budget" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="clean-card p-6 max-w-md w-full bg-white shadow-lg">
+            <h3 class="font-bold text-base text-slate-900 mb-4 pb-2 border-b border-slate-200">Set Station Sector Budget</h3>
+            <form onsubmit="submitBudget(event)" class="space-y-4">
+                <div>
+                    <label class="form-label">Station Sector</label>
+                    <select id="bgt-input-sector" required class="form-input"></select>
+                </div>
+                <div>
+                    <label class="form-label">Budget Financial Year</label>
+                    <input type="number" id="bgt-input-year" required value="2026" class="form-input">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">Planned Revenue (₹)</label>
+                        <input type="number" id="bgt-input-plan-rev" required class="form-input" placeholder="e.g. 150000">
+                    </div>
+                    <div>
+                        <label class="form-label">Actual Revenue (₹)</label>
+                        <input type="number" id="bgt-input-act-rev" value="0" class="form-input">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label">Planned Maintenance (₹)</label>
+                        <input type="number" id="bgt-input-plan-maint" required class="form-input" placeholder="e.g. 40000">
+                    </div>
+                    <div>
+                        <label class="form-label">Actual Maintenance (₹)</label>
+                        <input type="number" id="bgt-input-act-maint" value="0" class="form-input">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+                    <button type="button" onclick="closeModal('modal-budget')" class="btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn-primary text-xs">Save Budget</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Application Script -->
+    <script src="/js/app.js"></script>
+</body>
+</html>
